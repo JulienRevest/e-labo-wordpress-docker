@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  wordpress_fpm_db:
+    image: mariadb
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_ONETIME_PASSWORD: "yes"
+      MYSQL_DATABASE: ${WORDPRESS_MYSQL_DB_NAME}
+      MYSQL_USER: ${WORDPRESS_MYSQL_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: 127.0.0.1
+    ports:
+      - 3306:3306
+    expose:
+      - 3306

@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - './conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro'
+    depends_on:
+      - wordpress
+    volumes_from:
+      - "wordpress:ro"
+    links:
+      - wordpress
+    environment:
+      NGINX_PORT: 8080
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: e-labo/wordpress:wp-8.2-fpm
+    environment:
+        WORDPRESS_DB_HOST: wordpress_fpm_db #${DB_IP}:${DB_PORT}
+        WORDPRESS_DB_USER: ${WORDPRESS_MYSQL_USER}
+        WORDPRESS_DB_PASSWORD: ${WORDPRESS_MYSQL_PASSWORD}
+        WORDPRESS_DB_NAME: ${WORDPRESS_MYSQL_DB_NAME}
+        WORDPRESS_ADMIN_USERNAME: ${WORDPRESS_ADMIN_USER}
+        WORDPRESS_ADMIN_PASSWORD: ${WORDPRESS_ADMIN_PASSWORD}
+        WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL}
+        WORDPRESS_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+        WORDPRESS_URL: ${WORDPRESS_URL}
+        WORDPRESS_TITLE: ${WORDPRESS_SITE_TITLE}
+        WORDPRESS_LANG: ${WORDPRESS_LOCALE}
+        RESET_DB: 0
+        RESET_WPCONFIG: 0
+    volumes:
+      - ./plugins:/plugins
+      - ./wordpress:/var/www/html
+
